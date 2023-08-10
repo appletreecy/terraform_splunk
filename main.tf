@@ -84,6 +84,14 @@ resource "aws_security_group" "allow_web" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "HTTP"
+    from_port   = 8000
+    to_port     = 8000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -120,8 +128,8 @@ output "server_public_ip" {
 # 9. Create Ubuntu server and install/enable apache2
 
 resource "aws_instance" "web-server-instance" {
-  ami               = "ami-053b0d53c279acc90"
-  instance_type     = "t2.micro"
+  ami               = "ami-0bcdac869d4d8b887"
+  instance_type     = "c5.large"
   availability_zone = "us-east-1a"
   key_name          = "2023-0804"
 
@@ -130,15 +138,8 @@ resource "aws_instance" "web-server-instance" {
     network_interface_id = aws_network_interface.web-server-nic.id
   }
 
-  user_data = <<-EOF
-                #!/bin/bash
-                sudo apt update -y
-                sudo apt install apache2 -y
-                sudo systemctl start apache2
-                sudo bash -c 'echo your very first web server > /var/www/html/index.html'
-                EOF
   tags = {
-    Name = "web-server"
+    Name = "Splunk-server"
   }
 }
 
